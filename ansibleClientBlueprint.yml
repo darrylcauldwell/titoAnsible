@@ -14,7 +14,7 @@ resources:
         #cloud-config
         output: {all: '| tee -a /var/log/cloud-init-output.log'}
         runcmd:
-        - useradd -m -p $(openssl passwd -1 VMware1!)-d /home/ansible -s /bin/bash ansible
+        - useradd -m -p $(openssl passwd -1 VMware1!) -d /home/ansible -s /bin/bash ansible
         - mkdir /home/ansible/.ssh
         - touch /home/ansible/.ssh/authorization_keys
         - echo '${input.ansible-key}' >> /home/ansible/.ssh/authorized_keys
