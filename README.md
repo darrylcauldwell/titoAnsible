@@ -57,7 +57,15 @@ sed -i 's/#host_key_checking/host_key_checking/g' /etc/ansible/ansible.cfg
 
 Once Ansible server is configured we can add it as an Integration in Cloud Assembly (Infrastructure > Connections > Integrations).
 
-## Cloud Assembly Blueprint
+## Add To Ansible Inventory Blueprint
 
-So now Ansible server is available in Cloud Assembly we can this to a blueprint.  When we attach this to a VM we populate some basic details about our Ansible server such as which private key to use,  if using the example in this repository ensure account matches the name you gave Ansible integration,  for me this was string 'DC-Ansible'.
+So now Ansible server is available in Cloud Assembly we can this to a blueprint.  When we attach this to a VM we populate some basic details about our Ansible server such as which private key to use,  if using the example ansibleCas.yml in this repository ensure account matches the name you gave Ansible integration,  for me this was string 'DC-Ansible'.
+
+When we deploy this blueprint we can check see the IP address added to Ansible server inventory file /etc/ansible/hosts.
+
+In this blueprint I added to root,  but the Ansible object can be passed groups to be member.
+
+## Run a Ansible Playbook
+
+
 
