@@ -12,5 +12,4 @@ As well as configuring network this generates a SSH authorization key which we c
 
 ## Ansible Client Blueprint
 
-This is a simple blueprint simply deploys the VM template which does not contain Ansible. This uses an input parameter of SSH authorization key and uses cloud-init to create a user called Ansible which can be remotely called from Ansible server.
-
+This is a simple blueprint simply deploys the VM template. This uses an input parameter of SSH authorization key and uses cloud-init to create a user called 'ansible' which can be remotely called from Ansible server.
