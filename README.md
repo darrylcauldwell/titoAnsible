@@ -73,8 +73,5 @@ If we download these to Ansible server.
 
 ```
 mkdir /etc/ansible/playbooks
-wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsibleHeadless/master/web.yml -O /etc/ansible/playbooks/web.yml
-wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsibleHeadless/master/db.yml -O /etc/ansible/playbooks/db.yml
+wget https://github.com/darrylcauldwell/titoAnsible/blob/master/titoPlaybook.yml -O /etc/ansible/playbooks/titoPlaybook.yml
 ```
-
-
