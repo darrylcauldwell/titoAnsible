@@ -8,12 +8,12 @@ resources:
   ansible:
     type: Cloud.Ansible
     properties:
-      host: '${resource.ansibleClient.*}'
+      host: '${resource.ansibleCas.*}'
       osType: linux
       account: DC-Ansible
       username: ansible
-      privateKeyFile: /etc/root/.ssh/id_rsa
-  ansibleClient:
+      privateKeyFile: /root/.ssh/id_rsa
+  ansibleCas:
     type: Cloud.Machine
     properties:
       image: ansibleCentOS76
