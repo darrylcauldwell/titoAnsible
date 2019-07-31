@@ -2,14 +2,14 @@ formatVersion: 1
 inputs:
   ansible-key:
     type: string
-    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRZ/WLSW+e17RTIFkYotQ0iNJCPNKpaat9zZ11wZDzqoydhOo7t+1VdQy52ptmsKwpKgdAcwf7rrk6WAp59o8YbDVqzzi+VuHnNn9REBKMvDlemQJi/0JCh/lMhVke/LpEPNLCCWy/t4R8p0HMj9FCi24UmQW2hZDWwv1bTOvqxclrrAAIuD6APKD/xoNmuhTLDLwi2emfd/IL5DchDL1xmSd5+XoNc1Kaa9MXB0c1nxJix0ivbMhR8rs32BMD6x7LgLfGegjohUTmSaY4HQxfWev/Z5HBv2SDdocaVrbD6+fn4Noi+oewl+t66T3B9YmUBWCX8D1JVyjXB2e1khVj root@ansibleServer-mcm674411-112809240447.darrylcauldwell.com
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5LoFaZVRc7GLlelP/l6Iv3UUKx6iYowb3WfS6Dk+ziDgGjlFruJnqMTZxAsoKhZeHPAKP0FOC95kv6AGkeWm5+rbvszolIIF22oj7nOkpZVXKwCXrhw81kDje3fl1XXn1CjylnysVyql5f0Ipay9fdUOBypFh1s3KdRvRYAVSxa7NEjgQgGJMxWlVXZXYbFcTdDEQZ+OM/Pz3bXGpS2K7KkcioPg6iqtMqO3/s0mJn2NVXLlfTEiGUD4VF8UCneAOSaqOih/H/Ii9sv0vAYnNeGQd6WD6sL8nCKqtcoU+u+6QYWTVgUaJ1T+GgjOcbW5HPaxr/C8WoajWIGnZTLGh root@ansibleServer-mcm679349-112967850675.darrylcauldwell.com
     title: Ansible public SSH key
 resources:
   ansibleClient:
     type: Cloud.Machine
     properties:
-      image: potterCentOS76
-      flavor: potterSmall
+      image: ansibleCentOS76
+      flavor: ansibleMedium
       cloudConfig: |
         #cloud-config
         output: {all: '| tee -a /var/log/cloud-init-output.log'}
