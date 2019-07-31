@@ -18,7 +18,7 @@ resources:
         - mkdir /home/ansible/.ssh
         - touch /home/ansible/.ssh/authorization_keys
         - echo '${input.ansible-key}' >> /home/ansible/.ssh/authorized_keys
-        - echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        - echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
         - usermod --groups wheel ansible
       networks:
         - network: '${resource.net.id}'
