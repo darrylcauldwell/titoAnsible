@@ -10,11 +10,11 @@ This very simple blueprint simply deploys the VM template which contains Ansible
 
 As well as configuring network this generates a SSH authorization key which we can add to each Ansible client to create a simple security context server->client.
 
-## Ansible Client Blueprint
+## Simplest Ansible Client Blueprint
 
 This is a simple blueprint simply deploys the VM template. This uses an input parameter of SSH authorization key and uses cloud-init to create a user called 'ansible' which can be remotely called from Ansible server.
 
-## Test Communications
+### Test Communications
 
 If we deploy the Ansible Server then connect via SSH and type the public key string to screen.
 
@@ -30,3 +30,8 @@ If all is good then when the Ansible Client blueprint is deployed you should be 
 ssh ansible@<ansible-client-ip>
 sudo yum update
 ```
+
+## Cloud Assembly Ansible Integration
+
+There is a native integration of Ansible with Cloud Assembly there is [full documentation for configuring the integration](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html?hWord=N4IghgNiBc4HYGcCWAjCBTEBfIA).
+
