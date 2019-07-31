@@ -19,7 +19,7 @@ This is a simple blueprint simply deploys the VM template. This uses an input pa
 If we deploy the Ansible Server then connect via SSH and type the public key string to screen.
 
 ```
-cat ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub
 ```
 
 We can copy this from SSH session and paste as input to Ansible Client blueprint.
