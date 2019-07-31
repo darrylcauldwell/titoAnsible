@@ -54,3 +54,8 @@ We also need to disable host key checking, this is also a change to Ansible conf
 ```
 sed -i 's/#host_key_checking/host_key_checking/g' /etc/ansible/ansible.cfg
 ```
+
+Once Ansible server is configured we can add it as an Integration in Cloud Assembly (Infrastructure > Connections > Integrations).
+
+## Cloud Assembly Blueprint
+
