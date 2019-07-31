@@ -35,10 +35,15 @@ sudo yum update
 
 There is a native integration of Ansible with Cloud Assembly there is [full documentation for configuring the integration](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html?hWord=N4IghgNiBc4HYGcCWAjCBTEBfIA).
 
-Ansible Server
+Set the Vault password
+
 ```bash
 cat >/etc/ansible/vault <<\EOF
 ---
 vault_sudo_password: “VMware1!”
 EOF
+
+sed -i 's/#vault_password_file/vault_password_file/g' /etc/ansible/ansible.cfg
+sed -i 's#/path/to/vault_password_file#/etc/ansible/vault#g' /etc/ansible/ansible.cfg
+
 ```
