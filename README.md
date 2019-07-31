@@ -35,7 +35,9 @@ sudo yum update
 
 There is a native integration of Ansible with Cloud Assembly there is [full documentation for configuring the integration](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html?hWord=N4IghgNiBc4HYGcCWAjCBTEBfIA).
 
-Set the Vault password
+The Cloud Assembly integration requires some client side configuration which the ansibleClient blueprint deploys and also some ansibleServer configuration.  I haven't yet added and tested this in the ansibleServer blueprint so for now we need to run some commands.
+
+First we need to set a Vault password and change Ansible configuration file to use this.
 
 ```bash
 cat >/etc/ansible/vault <<\EOF
@@ -47,7 +49,7 @@ sed -i 's/#vault_password_file/vault_password_file/g' /etc/ansible/ansible.cfg
 sed -i 's#/path/to/vault_password_file#/etc/ansible/vault#g' /etc/ansible/ansible.cfg
 ```
 
-Disable host key checking
+We also need to disable host key checking, this is also a change to Ansible configuration file.
 
 ```
 sed -i 's/#host_key_checking/host_key_checking/g' /etc/ansible/ansible.cfg
