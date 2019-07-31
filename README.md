@@ -45,5 +45,10 @@ EOF
 
 sed -i 's/#vault_password_file/vault_password_file/g' /etc/ansible/ansible.cfg
 sed -i 's#/path/to/vault_password_file#/etc/ansible/vault#g' /etc/ansible/ansible.cfg
+```
 
+Disable host key checking
+
+```
+sed -i 's/#host_key_checking/host_key_checking/g' /etc/ansible/ansible.cfg
 ```
