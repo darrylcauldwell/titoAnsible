@@ -67,5 +67,14 @@ In this blueprint I added to root,  but the Ansible object can be passed groups 
 
 ## Run a Ansible Playbook
 
+In the [titoAnsibleHeadless repository](https://github.com/darrylcauldwell/titoAnsibleHeadless) I created two playbooks.  One of which installs TiTO web server and the other a mysql server.
+
+If we download these to Ansible server.
+
+```
+mkdir /etc/ansible/playbooks
+wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsibleHeadless/master/web.yml -O /etc/ansible/playbooks/web.yml
+wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsibleHeadless/master/db.yml -O /etc/ansible/playbooks/db.yml
+```
 
 
