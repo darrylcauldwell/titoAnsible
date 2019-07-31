@@ -1,0 +1,35 @@
+formatVersion: 1
+name: ansibleServer
+inputs:
+  env:
+    type: string
+    enum:
+      - 'cloud:potterVsphere'
+    default: 'cloud:vsphere'
+    title: Environment
+    description: Target Environment
+resources:
+  ansible:
+    type: Cloud.Machine
+    properties:
+      image: potterCentOS76Ansible
+      flavor: potterSmall
+      cloudConfig: |
+        #cloud-config
+        output: {all: '| tee -a /var/log/cloud-init-output.log'}
+        runcmd:
+        - ssh-keygen -t rsa -N "" -f /tmp/ansible-clients
+      remoteAccess:
+        authentication: usernamePassword
+      constraints:
+        - tag: '${input.env}'
+      networks:
+        - name: '${resource.net.name}'
+          network: '${resource.net.id}'
+  net:
+    type: Cloud.Network
+    properties:
+      name: potterPublic
+      networkType: existing
+      constraints:
+        - tag: '${input.env}'
