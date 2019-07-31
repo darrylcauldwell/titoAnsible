@@ -32,7 +32,7 @@ resources:
         #cloud-config
         output: {all: '| tee -a /var/log/cloud-init-output.log'}
         runcmd:
-        - ssh-keygen -t rsa -N "" -f /tmp/ansible-clients
+        - ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
       remoteAccess:
         authentication: usernamePassword
       constraints:
