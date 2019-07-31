@@ -13,3 +13,20 @@ As well as configuring network this generates a SSH authorization key which we c
 ## Ansible Client Blueprint
 
 This is a simple blueprint simply deploys the VM template. This uses an input parameter of SSH authorization key and uses cloud-init to create a user called 'ansible' which can be remotely called from Ansible server.
+
+## Test Communications
+
+If we deploy the Ansible Server then connect via SSH and type the public key string to screen.
+
+```
+cat /var/ansible-clients.pub
+```
+
+We can copy this from SSH session and paste as input to Ansible Client blueprint.
+
+If all is good then when the Ansible Client blueprint is deployed you should be able to SSH to it from Ansible server without password and have sudo rights.
+
+```
+ssh ansible@<ansible-client-ip>
+sudo yum update
+```
