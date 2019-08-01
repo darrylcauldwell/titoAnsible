@@ -78,7 +78,7 @@
   become_method: sudo
   gather_facts: true
   vars:
-    root_db_password: VMware1!
+    root_db_password: Tito2016
   tasks:
       - name: Ensure SELinux is disabled
         lineinfile:
@@ -105,6 +105,9 @@
         service:
           name: mysqld
           state: started
+
+      - name: Allow simple MySQL password
+        shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "uninstall plugin validate_password;"
 
       - name: Reset the root@localhost password
         shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "SET PASSWORD FOR root@localhost = '{{ root_db_password }}'" --connect-expired-password;
@@ -139,6 +142,7 @@
           dest: "/tmp/Tito.sql"
           content: |
             CREATE TABLE TitoTable (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, home VARCHAR(50) NOT NULL, work VARCHAR(50) NOT NULL, hour_home_departure VARCHAR(50) NOT NULL, hour_work_departure VARCHAR(50) NOT NULL)
+
       - name: Create TitoDB TitoTable
         mysql_db:
           name: TitoDB
