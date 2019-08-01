@@ -1,5 +1,5 @@
 ---
-- hosts: webserver
+- hosts: titoWebserver
   become: yes
   become_method: sudo
   vars:
@@ -74,7 +74,7 @@
           name: httpd
           state: restarted
 
-- hosts: database
+- hosts: titoDatabase
   become: yes
   become_method: sudo
   gather_facts: true
