@@ -77,3 +77,21 @@ wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/titoPl
 ```
 
 This specific playbook and blueprint relies on two Ansible host groups, titoWebserver and titoDatabase. These need to be added to the /etc/ansible/hosts file,  this facilitates the blueprint adding hosts to the correct place in inventory.
+
+## Perform Day 2 Operation
+
+As well as initial deployment of VMs and application day two operations will be required.  As the application VMs have their configuration state managed by the Ansible server this can be used to perform the day two operations.
+
+To demonstrate this first download this very simple playbook to the Ansible server.
+
+```
+wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/rename.yml -O /etc/ansible/playbooks/rename.yml
+```
+
+We can then execute this to change the hostname of the member of the inventory group titoWebserver.
+
+```
+ansible-playbook rename.yml
+```
+
+If we refresh the TiTO application page we can see the change as index.php now shows 'Runs on : ive-been-changed'.
