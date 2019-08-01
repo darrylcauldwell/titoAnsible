@@ -78,7 +78,7 @@
   become_method: sudo
   gather_facts: true
   vars:
-    root_db_password: Tito2016
+    root_db_password: VMware1!
   tasks:
       - name: Ensure SELinux is disabled
         lineinfile:
