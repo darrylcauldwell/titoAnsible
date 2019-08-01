@@ -75,3 +75,5 @@ If we download these to Ansible server.
 mkdir /etc/ansible/playbooks
 wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/titoPlaybook.yml -O /etc/ansible/playbooks/titoPlaybook.yml
 ```
+
+This specific playbook and blueprint relies on two Ansible host groups, titoWebserver and titoDatabase. These need to be added to the /etc/ansible/hosts file,  this facilitates the blueprint adding hosts to the correct place in inventory.
