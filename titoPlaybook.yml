@@ -60,8 +60,8 @@
           block: |
             LoadModule php5_module modules/libphp5.so
             <IfModule env_module>
-               SetEnv TITO-SQL %{SQLSERVER}
-            </IfModule>\
+               SetEnv TITO-SQL $SQLSERVER
+            </IfModule>
             
       - name: Insert lines in PHP.ini configuration file to set default timezone
         blockinfile:
