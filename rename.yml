@@ -1,0 +1,9 @@
+---
+- name: Rename server
+  hosts: titoWebserver
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Rename host
+    shell: hostname ive-been-changed
