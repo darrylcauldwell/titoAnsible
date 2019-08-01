@@ -108,10 +108,10 @@
           state: started
 
       - name: Allow simple MySQL password
-        shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "SET GLOBAL validate_password_policy=LOW;"
+        shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "SET GLOBAL validate_password_policy=LOW;" --connect-expired-password
 
       - name: Reset the root@localhost password
-        shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "SET PASSWORD FOR root@localhost = '{{ root_db_password }}'" --connect-expired-password;
+        shell: mysql -u root -p$(cat /var/log/mysqld.log | grep "temporary password" | rev | cut -d " " -f 1 | rev) -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ root_db_password }}';" --connect-expired-password
         
       - name: Configure MySQL client
         copy:
