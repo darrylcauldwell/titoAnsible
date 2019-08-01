@@ -33,6 +33,7 @@ resources:
         - echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
         - echo 'Defaults:ansible !requiretty' >> /etc/sudoers
         - usermod --groups wheel ansible
+        - export "SQLSERVER='${resource.db-vm.networks[0].address}'"
       networks:
         - network: '${resource.net.id}'
   ansibleTitoDb:
