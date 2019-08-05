@@ -35,6 +35,7 @@
           path: /etc/selinux/config
           regexp: '^SELINUX='
           line: SELINUX=disabled
+        when: ansible_facts['os_family'] == "CentOS"
           
       - name: Clone tito git repository
         git:
@@ -86,7 +87,8 @@
           path: /etc/selinux/config
           regexp: '^SELINUX='
           line: SELINUX=disabled
-
+        when: ansible_facts['os_family'] == "CentOS"
+     
       - name: Install MySQL 5.7 repo
         package:
           name: http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
