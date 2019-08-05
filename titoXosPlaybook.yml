@@ -5,27 +5,23 @@
   vars:
     mapsapikey: AIzaSyCrpIQtxT14_s_DcjAQwUa5r1p1IaTO2eQ
   tasks:
-      - name: Install apache package on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install apache package
+        package:
           name: httpd
           state: present
           
-      - name: Install php on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install php package
+        package:
           name: php
           state: present
           
-      - name: Install php-sql on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install php-sql package
+        package:
           name: php-mysql
           state: present
           
-      - name: Install git on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install git package
+        package:
           name: git
           state: present
       
@@ -91,21 +87,18 @@
           regexp: '^SELINUX='
           line: SELINUX=disabled
 
-      - name: Install MySQL 5.7 repo on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install MySQL 5.7 repo
+        package:
           name: http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
           state: present
 
-      - name: Install MySQL client on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install MySQL client
+        package:
           name: mysql
           state: present
           
-      - name: Install MySQL server on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install MySQL server
+        package:
           name: mysql-server
           state: present
           
@@ -128,9 +121,8 @@
             user = 'root'
             password = '{{ root_db_password }}'
             
-      - name: Install python pip on CentOS
-        when: ansible_facts['distribution'] == "CentOS"
-        yum:
+      - name: Install python pip
+        package:
           name: python-pip
           state: present
 
