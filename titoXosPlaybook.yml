@@ -21,6 +21,11 @@
         package:
           name: php
           state: present
+
+      - name: Install php curl package
+        package:
+          name: php-curl 
+          state: present
           
       - name: Install php-sql package
         package:
@@ -85,6 +90,12 @@
                SetEnv TITO-SQL $SQLSERVER
             </IfModule>
         when: ansible_facts['os_family'] == "CentOS"  
+
+      - name: Install HTML embedded scripting language (Apache 2 module)
+        apt:
+          name: libapache2-mod-php
+          state: present
+        when: ansible_facts['os_family'] == "Debian"
             
       - name: Insert lines in PHP.ini configuration file to set default timezone
         blockinfile:
@@ -92,6 +103,13 @@
           block: |
             date.timezone = Europe/London
         when: ansible_facts['os_family'] == "CentOS"
+
+      - name: Insert lines in PHP.ini configuration file to set default timezone
+        blockinfile:
+          path: /etc/php/7.0/apache2/php.ini
+          block: |
+            date.timezone = Europe/London
+        when: ansible_facts['os_family'] == "Debian"
             
       - name: Restart service httpd to pickup httpd.conf and php.ini changes
         service:
