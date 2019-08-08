@@ -1,82 +1,121 @@
 # TiTO Ansible
 
-This repository contains two Ansible playbooks that can be used to install the [Time Tracking Overview (TiTO) application](https://github.com/vmeoc/Tito).
+This repository contains an [Ansible playbook](https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html) that can be used to install the [Time Tracking Overview (TiTO) application](https://github.com/vmeoc/Tito). The TiTO application has a simple two tier architecture, the frontend uses Apache to host a PHP website and the backend is a MySQL database.
 
-This configuration builds on a previous use case of using Ansible with no central server. It assumes the setting up of Cloud Zone, Templates, Flavor Mapping, Image Mapping and Network Profile are complete as described in [titoAnsibleHeadless repository](https://github.com/darrylcauldwell/titoAnsibleHeadless).
+## Ansible Control Node
 
-## Ansible Server Blueprint
+To execute the Ansible playbook we need to configure a Ansible Control Node.
 
-This very simple blueprint simply deploys the VM template which contains Ansible with a static IP address. There is no specific need for static IP here,  but I am using a static IP address as I am using a static DNS record.
+The full installtion steps for the various Linux distributions  can be found [here](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 
-As well as configuring network this generates a SSH authorization key which we can add to each Ansible client to create a simple security context server->client.
+For the lab I tested in I used Ubuntu 16.04 so used following commands.
 
-## Simplest Ansible Client Blueprint
-
-This is a simple blueprint which deploys the VM template. This uses an input parameter of SSH authorization key and uses cloud-init to create a user called 'ansible' which can be remotely called from Ansible server.
-
-### Test Communications
-
-If we deploy the Ansible Server, connect via SSH we can run the following to type the public key string to screen.
-
-```
-cat ~/.ssh/id_rsa.pub
+```bash
+apt update
+apt install software-properties-common
+apt-add-repository --yes --update ppa:ansible/ansible
+apt install ansible
 ```
 
-We can copy this from SSH session and paste as input to Ansible Client blueprint.
+Full details of the Ansible configuration required for Cloud Assembly integration can be found [here](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html).
 
-If all is good and when the Ansible Client blueprint is deployed you should be able to SSH to it from Ansible server without password and have sudo rights.
+For Cloud Assembly integration we require Ansible 2.6 or higher, we can check version by running.
 
+```bash
+ansible --version
 ```
-ssh ansible@<ansible-client-ip>
-sudo yum update
-```
 
-## Cloud Assembly Ansible Integration
-
-There is a native integration of Ansible with Cloud Assembly. There is [full documentation for configuring the integration](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html?hWord=N4IghgNiBc4HYGcCWAjCBTEBfIA).
-
-The Cloud Assembly integration requires some client-side configuration which the ansibleClient blueprint deploys as well as some ansibleServer configuration.  I haven't yet added and tested this in the ansibleServer blueprint so for now, we need to run some commands.
-
-First, we need to set a Vault password and change Ansible configuration file to use this.
+For Cloud Assembly integration we are required to create a vault password file with a sudo password.  To create this change my-password to what you need and run.
 
 ```bash
 cat >/etc/ansible/vault <<\EOF
 ---
-vault_sudo_password: “VMware1!”
+vault_sudo_password: “my-password”
 EOF
+```
 
+Ansible runtime configuration is kept in a file. Part of the configuration is regarding the vault password file. The default installation has this commented out and with an invalid path.
+
+As well as vault file path Cloud Assembly integration requires we need to disable host key checking.
+
+We can un-comment the path line, update vault password path and update host key checking using sed and pattern matching.
+
+```bash
 sed -i 's/#vault_password_file/vault_password_file/g' /etc/ansible/ansible.cfg
 sed -i 's#/path/to/vault_password_file#/etc/ansible/vault#g' /etc/ansible/ansible.cfg
-```
-
-We also need to disable host key checking. This is also a change to Ansible configuration file.
-
-```
 sed -i 's/#host_key_checking/host_key_checking/g' /etc/ansible/ansible.cfg
 ```
 
-Once Ansible server is configured, we can add it as an Integration in Cloud Assembly (Infrastructure > Connections > Integrations).
+In order for the Ansible control node to connect to managed clients we require an SSH authorization key pair. The Cloud Assembly integration with Ansible will require access to the private key file on the Ansible control node. The account which will be used for the Cloud Assembly integration with Ansible should be used to create the SSH authorization key pair.
 
-## Add To Ansible Inventory Blueprint
+To create the private public key pair and output the public key. Ensure your shell is running as the Cloud Assembly integration with Ansible user and run these two commands. 
 
-So now Ansible server is available in Cloud Assembly, we can add this to a blueprint.  When we attach this to a VM, we populate some basic details about our Ansible server such as which private key to use. If using the example ansibleCas.yml in this repository, ensure the account matches the name you gave Ansible integration. For me this was string 'DC-Ansible'.
+```bash
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub
+```
 
-When we deploy this blueprint we can check see the IP address added to Ansible server inventory file /etc/ansible/hosts.
+The string output of id_rsa.pub is used later as an input parameter to the Cloud Assembly blueprint.
 
-In this blueprint I added to root, but the Ansible object can be passed groups to be member.
+When ran interactively an Ansible playbook outputs to the console. As Cloud Assembly is running the Ansible playbooks by default we don't see the output. Ansible logging is disabled by default. For testing and learning in a lab environment it is very useful to enable Ansible logging. We can do this by uncommenting a line in the Ansible configuration file.
 
-## Run a Ansible Playbook
+```
+sed -i 's/#log_path/log_path/g' /etc/ansible/ansible.cfg
+```
 
-In the [titoAnsibleHeadless repository](https://github.com/darrylcauldwell/titoAnsibleHeadless) I created two playbooks.  One of which installs TiTO web server and the other a mysql server.
+When we are running Cloud Assembly blueprints which call Ansible it is useful to have an SSH session to the Ansible server and follow the log file.
 
-We can download these to Ansible server with the following commands:
+```bash
+tail -f /var/log/ansible.log
+```
+
+## Cloud Assembly Ansible Integration
+
+Once the pre-requsit Ansible control node configuration is complete this can be added as an integration with Cloud Assembly. Full details of how to add the integration can be found [here](https://docs.vmware.com/en/VMware-Cloud-Assembly/services/Using-and-Managing/GUID-9244FFDE-2039-48F6-9CB1-93508FCAFA75.html). 
+
+## TiTO Ansible Playbook
+
+The TiTO Ansible Server blueprint calls the Ansible control node to manage execution of the Ansible playbook. The TiTO Ansible playbook needs to be stored on the Ansible control node prior to deploying TiTO Cloud Assembly blueprint.
+
+The Ansible playbooks can be located anywhere on Ansible control node. In the example TiTO Cloud Assembly blueprint the /etc/ansible/playbooks is used.  To create this folder and populate the Ansible playbook run the following.
 
 ```
 mkdir /etc/ansible/playbooks
-wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/titoPlaybook.yml -O /etc/ansible/playbooks/titoPlaybook.yml
+wget https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/titoXosPlaybook.yml -O /etc/ansible/playbooks/titoXosPlaybook.yml
 ```
 
-This specific playbook and blueprint rely on two Ansible host groups: titoWebserver and titoDatabase. This need to be added to the /etc/ansible/hosts file. This facilitates the blueprint adding hosts to the correct place in inventory.
+## TiTO Ansible Inventory File
+
+The TiTO Ansible playbook depends on some configuration on Ansible control node.  It requires two host groups creating in the [Ansible inventory file](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html). The group names which need to be added to the inventory are are [titoXosDatabase] and [titoXosWebservers]. These group names are also specified in the Cloud Assembly blueprint in order that during provisioning VMs get placed in correct Ansible inventory group which playbook relies on.
+
+```bash
+root@localhost:/# vi /etc/ansible/hosts
+[titoXosWebservers]
+
+[titoXosDatabase]
+```
+
+## TiTO Ansible Server Cloud Assembly Blueprint
+
+The TiTO Ansible Server blueprint depends on a deployment environment configured in Cloud Assembly with some explicit properties. The explicit properties can be changed in the blueprint to match environment.
+
+1. A valid Cloud Zone tagged with target:vsphere 
+2. A Ubuntu 16.04 VM template with cloud-init installed and working in Cloud Zone with Image Mapping named im-ubuntu16046
+3. A Flavor Mapping named fl-small with 2x CPU and 4GB RAM
+4. A valid Network Profile with internet connectivity in Cloud Zone tagged with environment:production
+5. The Ansible integration is named int-ansible-public
+
+The TiTO Cloud Assembly blueprint is a file stored in this repository named [tito-ansibleServer.yml](https://raw.githubusercontent.com/darrylcauldwell/titoAnsible/master/tito-ansibleServer.yml). Create a new Cloud Assembly blueprint and copy paste the contents of the file into the new blueprint.
+
+Next take the SSH public key we created on Ansible control node earlier and update the default value for the input parameter ansible-key with the contents of Ansible control node public key.
+
+Before deploying the blueprint you can see more of what is happening by following the Ansible control node log file and Ansible inventory file. When we deploy this blueprint we can check see the IP address added to Ansible server inventory file /etc/ansible/hosts. We can then see the Ansible playbook output in the log file /var/log/ansible.log as it executes.
+
+Troubleshooting Tip 1, the Ansible playbook is written to install application on either Ubuntu16.04 or CentOS7. It uses conditional logic to do this so you will see some tasks skipped,  this is normal.
+
+Troubleshooting Tip 2, it is important that there is good network connectivity between Ansible control node and provisioned guests.  In lab we experienced issue with poor connectivity which caused SFTP issues, moving Ansible control node to more stable network helped.
+
+Troubleshooting Tip 3, if new Linux user on Ansible control node is setup ensure account is owner of ~/.ansible this is where temporary files are created before being SFTP to client.  If issues occur and permissions change Ansible fact gathering can hang,  if this occurs clear all files and folders from ~/.ansible.
 
 ## Perform Day 2 Operation
 

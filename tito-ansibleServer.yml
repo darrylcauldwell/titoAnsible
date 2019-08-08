@@ -1,0 +1,122 @@
+formatVersion: 1
+inputs:
+  application:
+    type: string
+    default: tito
+    readOnly: true
+  environment:
+    type: string
+    description: App Environment
+    default: production
+    enum:
+      - dev
+      - test
+      - production
+  cloud_target:
+    type: string
+    description: Select target cloud
+    enum:
+      - 'target:vsphere'
+  mapsapikey:
+    type: string
+    description: google maps api key
+    default: AIzaSyCrpIQtxT14_s_DcjAQwUa5r1p1IaTO2eQ
+  SSHkey:
+    type: string
+    description: VM SSH Key
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDC2sbYtHu65GhgEYk8kUCzCFBWlKM24hMiZwcwJy0mws9KwsCTEEH+aOlt0BvMcYchhV5I2Bxi3nS05vSXMZycoSG8t6Cw0Cw2IYHYNYzl8XCQ5QUtFDXoEK1eGEQTeXissTkR15Fk2CzBYXoGNUKe7mt6TQGKMpwXwNDZe2ZlJXRGsiTgLCdLehYUS+qIIOirQqD2VjBPVfp1ckCztgIydiQoZOilMAQBnJ6KGMr4DiuF8zevgFl4OcFDm7eeuP9cOSYXRtCyAtrB5xvYNGcf+AiMz7yun/HLwMkXab8Nzup1I+90GVtouMddpSp3gZyPpC7CVeToCebhe+EGUjzR riazm@riazm-a01.vmware.com
+  FECount:
+    type: integer
+    default: 1
+  wavefront_proxy:
+    type: string
+    title: Wavefront proxy
+    default: Commuter-tito-00725-164904062.us-east-1.elb.amazonaws.com
+  ansible-key:
+    type: string
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKOk8QPRN3WmUnbWu0csX47B/0ga3IgwBirsVmoDr6pfcIgYoTVAMLhg4i9/OjyyvBJcBJuXH3FJnM06mPICUPyblXmXhJ9YnTjE9987s4Z5OFish4y8LSE97pR4lFv6z5l2tT+0RyjIXWyo4voKOpE//voz1/V/BygNWvy0Xs+zzSkDBqx9Gy86dZ24+zvT1501R/phRuETor/9jyUOe+tAnZCB6yt7RUqvH5ONuOU4Gnn9DQR1lgowmmDPr+S5REEccjxhPbby+Ap0lQsPPrXF9vp0LwNiiv4hp1Bbel2rxQF617vfm1sT2NEcbkpZEiC7hP3eI5YoX1JGcGxvpd root@localhost
+    title: Ansible public SSH key
+resources:
+  ansibleTitoWeb:
+    type: Cloud.Ansible
+    properties:
+      host: '${resource.titoWeb.*}'
+      osType: linux
+      account: int-ansible-public
+      username: ansible
+      privateKeyFile: /root/.ssh/id_rsa
+      groups:
+        - titoXosWebservers
+      playbooks:
+        provision: /etc/ansible/playbooks/titoXosPlaybook.yml
+  titoWeb:
+    type: Cloud.Machine
+    properties:
+      image: im-ubuntu16046
+      flavor: fl-small
+      cloudConfig: |
+        #cloud-config
+        output: {all: '| tee -a /var/log/cloud-init-output.log'}
+        runcmd:
+        - sudo useradd -m -p $(openssl passwd -1 VMware1!) -d /home/ansible -s /bin/bash ansible
+        - sudo mkdir /home/ansible/.ssh
+        - sudo touch /home/ansible/.ssh/authorization_keys
+        - sudo echo '${input.ansible-key}' >> /home/ansible/.ssh/authorized_keys
+        - sudo chmod -R 700 /home/ansible/.ssh
+        - sudo chown -R ansible:ansible /home/ansible/.ssh
+        - sudo echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        - sudo echo 'Defaults:ansible !requiretty' >> /etc/sudoers
+        - sudo usermod --groups wheel ansible
+        - sudo sed -i 's/AllowUsers ubuntu/AllowUsers ubuntu ansible/g' /etc/ssh/sshd_config
+        - sudo systemctl restart sshd
+        - sudo echo SQLSERVER='${resource.titoDb.networks[0].address}' >> /etc/environment
+      constraints:
+        - tag: '${input.cloud_target}'
+      networks:
+        - name: '${resource.Public_Cloud_Network.name}'
+          network: '${resource.Public_Cloud_Network.id}'
+          assignPublicIpAddress: true
+  ansibleTitoDbAnsible:
+    type: Cloud.Ansible
+    properties:
+      host: '${resource.titoDb.*}'
+      osType: linux
+      account: int-ansible-public
+      username: ansible
+      privateKeyFile: /root/.ssh/id_rsa
+      groups:
+        - titoXosDatabase
+      playbooks:
+        provision: /etc/ansible/playbooks/titoXosPlaybook.yml
+  titoDb:
+    type: Cloud.Machine
+    properties:
+      image: im-ubuntu16046
+      flavor: fl-small
+      cloudConfig: |
+        #cloud-config
+        output: {all: '| tee -a /var/log/cloud-init-output.log'}
+        runcmd:
+        - sudo useradd -m -p $(openssl passwd -1 VMware1!) -d /home/ansible -s /bin/bash ansible
+        - sudo mkdir /home/ansible/.ssh
+        - sudo touch /home/ansible/.ssh/authorization_keys
+        - sudo echo '${input.ansible-key}' >> /home/ansible/.ssh/authorized_keys
+        - sudo chmod -R 700 /home/ansible/.ssh
+        - sudo chown -R ansible:ansible /home/ansible/.ssh
+        - sudo echo 'ansible ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        - sudo echo 'Defaults:ansible !requiretty' >> /etc/sudoers
+        - sudo sed -i 's/AllowUsers ubuntu/AllowUsers ubuntu ansible/g' /etc/ssh/sshd_config
+        - sudo systemctl restart sshd
+      constraints:
+        - tag: '${input.cloud_target}'
+      networks:
+        - name: '${resource.Public_Cloud_Network.name}'
+          network: '${resource.Public_Cloud_Network.id}'
+  Public_Cloud_Network:
+    type: Cloud.Network
+    properties:
+      name: PublicCloudNetwork
+      networkType: existing
+      constraints:
+        - tag: publicsubnet
+        - tag: '${input.environment}'
