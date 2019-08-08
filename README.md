@@ -109,13 +109,15 @@ The TiTO Cloud Assembly blueprint is a file stored in this repository named [tit
 
 Next take the SSH public key we created on Ansible control node earlier and update the default value for the input parameter ansible-key with the contents of Ansible control node public key.
 
-Before deploying the blueprint you can see more of what is happening by following the Ansible control node log file and Ansible inventory file. When we deploy this blueprint we can check see the IP address added to Ansible server inventory file /etc/ansible/hosts. We can then see the Ansible playbook output in the log file /var/log/ansible.log as it executes.
+You should now be able to deploy the blueprint. Once it completes successfully you should be able to point web browser to IP of web server and get TiTO.
 
-Troubleshooting Tip 1, the Ansible playbook is written to install application on either Ubuntu16.04 or CentOS7. It uses conditional logic to do this so you will see some tasks skipped,  this is normal.
+* Troubleshooting Tip 1, Before deploying the blueprint you can see more of what is happening by following the Ansible control node log file and Ansible inventory file. When we deploy this blueprint we can check see the IP address added to Ansible server inventory file /etc/ansible/hosts. We can then see the Ansible playbook output in the log file /var/log/ansible.log as it executes.
 
-Troubleshooting Tip 2, it is important that there is good network connectivity between Ansible control node and provisioned guests.  In lab we experienced issue with poor connectivity which caused SFTP issues, moving Ansible control node to more stable network helped.
+* Troubleshooting Tip 2, the Ansible playbook is written to install application on either Ubuntu16.04 or CentOS7. It uses conditional logic to do this so you will see some tasks skipped,  this is normal.
 
-Troubleshooting Tip 3, if new Linux user on Ansible control node is setup ensure account is owner of ~/.ansible this is where temporary files are created before being SFTP to client.  If issues occur and permissions change Ansible fact gathering can hang,  if this occurs clear all files and folders from ~/.ansible.
+* Troubleshooting Tip 3, it is important that there is good network connectivity between Ansible control node and provisioned guests.  In lab we experienced issue with poor connectivity which caused SFTP issues, moving Ansible control node to more stable network helped.
+
+* Troubleshooting Tip 4, if new Linux user on Ansible control node is setup ensure account is owner of ~/.ansible this is where temporary files are created before being SFTP to client.  If issues occur and permissions change Ansible fact gathering can hang,  if this occurs clear all files and folders from ~/.ansible.
 
 ## Perform Day 2 Operation
 
